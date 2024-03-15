@@ -2,21 +2,28 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-
+typedef struct {
+    int day;
+    int month;
+    int year;
+} Date;
 
 typedef struct {
     char *task;
-    char *date_echeance;
+    Date date;
     int priority;
     int completed;
 } Task;
 Task *tasks = NULL;
 int length = 0;
 
-void addTask(const char *task,int priority,char *date_echeance);
+void addTask(const char *task,int priority);
 void listTask();
-void editTask();
-void deleteTask();
+void editTask(int index);
+void deleteTask(int index);
+void completeTask(int index);
+void filterByPrio(int priority);
+void filterByDate(Date date);
 
 
 void main() {
@@ -25,21 +32,20 @@ void main() {
     int priority = 3;
     time_t t = time(NULL);
     struct tm *tm = localtime(&t);
-    printf("%s", asctime(tm));
-    addTask(task,priority,asctime(tm));
+    Date date = {tm->tm_mday,tm->tm_mon + 1,tm->tm_year + 1900};
+    printf("%d %d %d\n",date.day,date.month,date.year);
+    addTask(task,priority);
     listTask();
     free(tasks);
 }
 
 
-void addTask(const char *task,int priority,char *date_echeance) {
+void addTask(const char *task,int priority) {
     tasks = (Task*)realloc(tasks,(length + 1) * sizeof(Task));
     tasks[length].task = (char *)malloc(strlen(task) + 1);
-    tasks[length].date_echeance = (char *)malloc(strlen(date_echeance) + 1);
     tasks[length].completed = 0;
     tasks[length].priority = priority;
     strcpy(tasks[length].task,task);
-    strcpy(tasks[length].date_echeance,date_echeance);
     length++;
     printf("task added\n");
 }
@@ -52,6 +58,7 @@ void listTask() {
         } else {
             strcpy(status,"pending");
         }
-        printf("%d. %s [%s][%d][%s]\n",i + 1,tasks[i].task,status,tasks[i].priority,tasks[i].date_echeance);
+        printf("%d. %s [%s][%d]\n",i + 1,tasks[i].task,status,tasks[i].priority);
     }
 }
+
