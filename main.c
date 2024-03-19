@@ -40,7 +40,7 @@ int main() {
 
     int choice;
     do {
-        printf("\n1. Add Task\n2. List Tasks\n3. Edit Task\n4. Delete Task\n5. Complete Task\n6. Exit\n");
+        printf("\n1. Add Task\n2. List Tasks\n3. Edit Task\n4. Delete Task\n5. Complete Task\n6. Filter by Priority\n7. Filter by Date\n8. Exit\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
         switch (choice) {
@@ -75,18 +75,30 @@ int main() {
                 completeTask(completeIndex - 1); // Adjust for 0-based indexing
                 break;
             case 6:
+                printf("Enter priority to filter by: ");
+                int prio;
+                scanf("%d", &prio);
+                filterByPrio(prio);
+                break;
+            case 7:
+                printf("Enter date to filter by (day month year): ");
+                scanf("%d %d %d", &date.day, &date.month, &date.year);
+                filterByDate(date);
+                break;
+            case 8:
                 printf("Exiting...\n");
                 break;
             default:
                 printf("Invalid choice\n");
         }
-    } while (choice != 6);
+    } while (choice != 8);
 
     // Free allocated memory before exiting
     freeTasks();
 
     return 0;
 }
+
 
 void addTask(const char *task, int priority, Date date) {
     tasks = realloc(tasks, (length + 1) * sizeof(Task));
@@ -155,6 +167,45 @@ void completeTask(int index) {
 
     tasks[index].completed = 1;
     printf("Task at index %d marked as completed\n", index + 1);
+}
+void filterByPrio(int priority) {
+    printf("Tasks with priority %d:\n", priority);
+    int found = 0;
+    for (int i = 0; i < length; i++) {
+        if (tasks[i].priority == priority) {
+            char status[10];
+            if (tasks[i].completed == 1) {
+                strcpy(status, "done");
+            } else {
+                strcpy(status, "pending");
+            }
+            printf("%d. %s [Due: %d-%02d-%02d][Priority: %d][%s]\n", i + 1, tasks[i].task, tasks[i].date.year, tasks[i].date.month, tasks[i].date.day, tasks[i].priority, status);
+            found = 1;
+        }
+    }
+    if (!found) {
+        printf("No tasks with priority %d\n", priority);
+    }
+}
+
+void filterByDate(Date date) {
+    printf("Tasks due on %d-%02d-%02d:\n", date.year, date.month, date.day);
+    int found = 0;
+    for (int i = 0; i < length; i++) {
+        if (tasks[i].date.day == date.day && tasks[i].date.month == date.month && tasks[i].date.year == date.year) {
+            char status[10];
+            if (tasks[i].completed == 1) {
+                strcpy(status, "done");
+            } else {
+                strcpy(status, "pending");
+            }
+            printf("%d. %s [Priority: %d][%s]\n", i + 1, tasks[i].task, tasks[i].priority, status);
+            found = 1;
+        }
+    }
+    if (!found) {
+        printf("No tasks due on %d-%02d-%02d\n", date.year, date.month, date.day);
+    }
 }
 
 void freeTasks() {
