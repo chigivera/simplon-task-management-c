@@ -49,8 +49,11 @@ int main() {
             case 1:
                 printf("Enter task description: ");
                 scanf(" %[^\n]", task);
-                printf("Enter priority (1-5): ");
-                scanf("%d", &priority);
+                do {
+                    printf("Enter priority (1-5): ");
+                    scanf("%d", &priority);
+                    if(priority < 1 || priority > 5) printf("Invalid input.\n");
+                } while(priority < 1 || priority > 5);
                 printf("Enter due date (day month year): ");
                 scanf("%d %d %d", &date.day, &date.month, &date.year);
                 addTask(task, priority, date);
@@ -138,8 +141,11 @@ void editTask(int index) {
 
     printf("Enter new task description: ");
     scanf(" %[^\n]", tasks[index].task);
-    printf("Enter new priority (1-5): ");
-    scanf("%d", &tasks[index].priority);
+    do {
+        printf("Enter priority (1-5): ");
+        scanf("%d", &tasks[index].priority);
+        if(tasks[index].priority < 1 || tasks[index].priority > 5) printf("Invalid input.\n");
+    } while(tasks[index].priority < 1 || tasks[index].priority > 5);
     printf("Enter new due date (day month year): ");
     scanf("%d %d %d", &tasks[index].date.day, &tasks[index].date.month, &tasks[index].date.year);
 
@@ -171,6 +177,10 @@ void completeTask(int index) {
     printf("Task at index %d marked as completed\n", index + 1);
 }
 void filterByPrio(int priority) {
+    if( priority < 1 || priority > 5) {
+    printf("Invalid input.\n");
+    return;
+    }
     printf("Tasks with priority %d:\n", priority);
     int found = 0;
     for (int i = 0; i < length; i++) {
