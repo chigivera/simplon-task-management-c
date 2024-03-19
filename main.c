@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#define EXIT_FAILURE 1
+
 
 typedef struct {
     int day;
